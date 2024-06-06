@@ -19,7 +19,7 @@ Para enviar los emails se ha utilizado la API de Sendgrid.
 
 ### See a Live Demo
 
-(https://remindme.app)
+([https://remindme.app](https://projemyproject.web.app/))
 
 
 ### Función cloud para recibir los datos desde llamada API:
@@ -39,9 +39,6 @@ const dbConfig = {
 };
 
 functions.http('insertData', async (req, res) => {  
-  res.set('Access-Control-Allow-Origin', 'http://localhost:3000');
-  res.set('Access-Control-Allow-Methods', 'GET, POST');
-  res.set('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') { res.status(204).send(''); return; }
   if (req.method !== 'POST') { res.status(405).send('Método no permitido'); return; }
