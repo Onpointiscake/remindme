@@ -1,95 +1,90 @@
-import Image from "next/image";
+"use client";
+import { useState, } from 'react';
+import axios from 'axios';
+import { DatePicker, Button, Input, Alert } from 'antd';
+import { ArrowDownOutlined, SignatureOutlined , ClockCircleOutlined } from '@ant-design/icons';
 import styles from "./page.module.css";
 
 export default function Home() {
+  const [task, setTask] = useState('');
+  const [email, setEmail] = useState('');
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [mostrarAlerta, setMostrarAlerta] = useState(false);
+
+  const handleTaskChange = (e) => {
+    setTask(e.target.value);
+  };
+
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+  };
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+    setShowConfirmation(true);
+  };
+
+  const handleRemindMeClick = () => {
+    const selectedDateString = selectedDate.toISOString().slice(0, 10);
+
+    const data = {
+      tarea: task,
+      email: email,
+      date: selectedDateString
+    };
+ 
+    axios.post('https://europe-west3-molten-mechanic-422515-n9.cloudfunctions.net/function-test', data)
+      .then(response => {
+        console.log('Respuesta del servidor:', response.data);
+        // Resetear campos después de enviar los datos
+        setTask('');
+        setEmail('');
+        setSelectedDate(null);
+        setShowConfirmation(false);
+        setMostrarAlerta(true);
+      })
+      .catch(error => {
+        console.error('Error al enviar datos:', error);
+      });
+  };
+
   return (
     <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.js</code>
-        </p>
+      <div className={styles.description} >
+        <h1>REMINDME <SignatureOutlined spin={false} /></h1>
         <div>
           <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
+            href="https://javiersuarezportfolio.vercel.app"
             target="_blank"
             rel="noopener noreferrer"
           >
             By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
+           <h2>Javier Suarez</h2>
           </a>
         </div>
+        
       </div>
+
+      <Input placeholder="Me debo acordar de..." value={task} onChange={handleTaskChange} ></Input>
+      <DatePicker placeholder="¿Cuándo?" onChange={handleDateChange} />
+      
+      {showConfirmation && (
+        <div className={`confirmation-text ${showConfirmation ? 'active' : ''}`}>
+          <h4>De acuerdo, te mandaremos recordatorio.</h4>
+         
+        </div>
+        )}
+
+        {showConfirmation && (
+          <div style={{textAlign: 'center}', marginBottom: '-2.5em'}}><ArrowDownOutlined style={{ fontSize: '4em', color: '#1777FF' }} /></div>
+        )}
 
       <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
+        <Input placeholder="¿A qué email?" value={email} onChange={handleEmailChange} ></Input>
+        <Button onClick={handleRemindMeClick}>REMINDME</Button>
       </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
+      {mostrarAlerta && <Alert showIcon message="Hecho! Te llegará un email cuando llegue el dia de la tarea" type="success" />}
     </main>
   );
 }
