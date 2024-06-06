@@ -2,8 +2,6 @@
 
 Aplicación que envía recordatorios de tareas por email el dia concreto indicado por el usuario.
 
-App creada con React y librería UI Ant design. Backend en Google Cloud
-
 
 ## Arquitectura
 
