@@ -34,7 +34,7 @@ export default function Home() {
       date: selectedDateString
     };
  
-    axios.post('https://europe-west3-molten-mechanic-422515-n9.cloudfunctions.net/function-test', data)
+    axios.post('process.env.CLOUD_FUNCTION', data)
       .then(response => {
         console.log('Respuesta del servidor:', response.data);
         // Resetear campos después de enviar los datos
